@@ -22,11 +22,13 @@ add wave -group decode -radix hexadecimal sim:/t_processor/the_processor/registe
 add wave -group decode -radix hexadecimal sim:/t_processor/the_processor/offset
 add wave -group decode -radix hexadecimal sim:/t_processor/the_processor/alu_operand1
 add wave -group decode -radix hexadecimal sim:/t_processor/the_processor/alu_operand2
-add wave -group decode -radix hexadecimal sim:/t_processor/the_processor/alu_result
+add wave -group decode -radix hexadecimal sim:/t_processor/the_processor/jump_control
 
 add wave -group alu -radix hexadecimal sim:/t_processor/the_processor/enable_alu_output_register
 add wave -group alu -radix hexadecimal sim:/t_processor/the_processor/source_alu
 add wave -group alu -radix hexadecimal sim:/t_processor/the_processor/data_from_alu_output_register
+add wave -group alu -radix hexadecimal sim:/t_processor/the_processor/alu_result
+add wave -group alu -radix hexadecimal sim:/t_processor/the_processor/zero_flag
 
 add wave -group mem -radix hexadecimal sim:/t_processor/the_processor/read_memory
 add wave -group mem -radix hexadecimal sim:/t_processor/the_processor/write_memory
@@ -34,7 +36,6 @@ add wave -group mem -radix hexadecimal sim:/t_processor/the_processor/write_regi
 add wave -group mem -radix hexadecimal sim:/t_processor/the_processor/address_to_read
 add wave -group mem -radix hexadecimal sim:/t_processor/the_processor/address_to_write
 add wave -group mem -radix hexadecimal sim:/t_processor/the_processor/data_from_memory
-add wave -group mem -radix hexadecimal sim:/t_processor/the_processor/jump_control
 
 add wave -group writeback -radix hexadecimal sim:/t_processor/the_processor/write_register
 add wave -group writeback -radix hexadecimal sim:/t_processor/the_processor/mem_to_register
@@ -57,16 +58,9 @@ add wave -group video sim:/t_processor/VGA_HS_d
 add wave -group video sim:/t_processor/VGA_VS_d
 add wave -group video sim:/t_processor/disp_ena_d
 
-add wave -group relatorio -radix hexadecimal sim:/t_processor/the_processor/branch_control
-add wave -group relatorio -radix hexadecimal sim:/t_processor/the_processor/zero_flag
-add wave -group relatorio -radix hexadecimal sim:/t_processor/the_processor/beq_control
-add wave -group relatorio -radix hexadecimal sim:/t_processor/the_processor/bne_control
-add wave -group relatorio -radix hexadecimal sim:/t_processor/the_processor/instruction_address
-
-WaveRestoreCursors {{bne t0,t1,1} {124385 ps} 1} {{bne t2,t0,7} {205154 ps} 1} {{beq t2,t0,1} {283500 ps} 1} {{beq t0,t1,12} {365000 ps} 1} {{beq t0,t0,1} {444231 ps} 1}
-
 configure wave -shortnames 1
+WaveRestoreCursors { "BEQ jump" {289706 ps} 1} {"BEQ not jump" {540675 ps} 1} {"BNE not jump" {570826 ps} 1} {"BNE jump" {599130 ps} 1}
 
-run 500 ns
+run 1000 ns
 
 wave zoom full

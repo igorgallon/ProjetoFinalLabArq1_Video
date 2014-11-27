@@ -16,8 +16,7 @@ architecture behavioral of processor is
 	port (
 		clock, enable, jump, branch: in std_logic;
 		next_address: out std_logic_vector (address_width - 1 downto 0);
-		jump_address: in std_logic_vector (address_width - 1 downto 0);
-		branch_address: in std_logic_vector (address_width - 1 downto 0));
+		jump_address,branch_address: in std_logic_vector (address_width - 1 downto 0));
 	end component;
 
 	component state_register 
@@ -53,9 +52,8 @@ architecture behavioral of processor is
 		alu_operation: out std_logic_vector (2 downto 0);
 		read_memory, write_memory: out std_logic;
 		offset: out std_logic_vector (31 downto 0);
-		jump_control: out std_logic;
-		jump_offset: out std_logic_vector(25 downto 0);
-		beq_control, bne_control: out std_logic);
+		jump_control,branch_op,not_equal: out std_logic;
+		jump_offset: out std_logic_vector(25 downto 0));
 	end component;
 
 	component register_bank
@@ -97,14 +95,14 @@ architecture behavioral of processor is
 
 	-- control signals for state elements.
 	signal enable_program_counter, 	
-		enable_alu_output_register, jump_control, branch_control, beq_control, bne_control: std_logic;
+		enable_alu_output_register, jump_control, branch_control,branch_op,zero_flag,not_equal: std_logic;
 
 	-- Signals related to the instruction fetch state.
-	signal address_of_next_instruction, instruction, data_from_instruction_register, jump_address, branch_address: 
+	signal address_of_next_instruction, instruction, data_from_instruction_register, jump_address,branch_address: 
 			std_logic_vector (31 downto 0);
 	signal	jump_offset: std_logic_vector(25 downto 0);
 
-	-- Signals related to the bank of registers.
+	-- Signals related to the banck of registers.
 	signal destination_register, register1, register2, register3: std_logic_vector (4 downto 0);
 	signal data_from_register1, data_from_register2, data_to_write_in_register: 
 		std_logic_vector (31 downto 0); 
@@ -115,8 +113,7 @@ architecture behavioral of processor is
 	signal register_a, register_b, alu_result, 		
 	  data_from_alu_output_register: std_logic_vector (31 downto 0);
 	signal source_alu, reg_dst: std_logic;
-	signal alu_operation: std_logic_vector (2 downto 0);
-	signal zero_flag: std_logic; 
+	signal alu_operation: std_logic_vector (2 downto 0); 
 
 	-- Signals related to the memory access.
 	signal address_to_read, address_to_write: std_logic_vector (31 downto 0);
@@ -139,9 +136,9 @@ begin
 		data_in_last_modified_register <= data_to_write_in_register;
 		
 		jump_address <= address_of_next_instruction(31 downto 26) & jump_offset;
-		branch_address <= address_of_next_instruction(31 downto 26) + offset;
-		
-		
+		branch_address <= address_of_next_instruction + offset;
+		branch_control <= branch_op and (zero_flag XOR not_equal); --(zero_flag AND not not_equal) OR (not zero_flag and not_equal));
+
 
 		pc: program_counter port map (
 		  clk, 
@@ -176,10 +173,10 @@ begin
 		  read_memory, 
 		  write_memory, 
 		  offset, 
-		  jump_control, 
-		  jump_offset,
-		  beq_control,
-		  bne_control); 
+		  jump_control,
+		  branch_op,
+		  not_equal, 
+		  jump_offset); 
 
 		bank_of_registers: register_bank port map (
 		  clk, 
@@ -195,7 +192,7 @@ begin
 
 --		alu_input_register_b: state_register port map (clk, enable_alu_input_registers, 			data_from_register2, alu_operand2);
 
-		alu: alu_x port map (alu_operand1, alu_operand2, alu_operation, alu_result, zero_flag);
+		alu: alu_x port map (alu_operand1, alu_operand2, alu_operation, alu_result,zero_flag);
 
 		alu_output_register: state_register port map (clk, enable_alu_output_register,	alu_result, data_from_alu_output_register);
 
@@ -209,9 +206,6 @@ begin
 		  write_memory, 
 		  data_from_memory, 
 		  video_out);     
-
-    branch_control <= '1' when (beq_control ='1' and  zero_flag='1') or (bne_control='1' and zero_flag = '0')
-                    else '0';
 
 		--data_memory_register: state_register port map (clk, enable_data_memory_register, 			data_from_memory, data_from_memory_register);
 

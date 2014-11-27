@@ -22,14 +22,14 @@ signal row_div2 : unsigned(11 downto 0);
 
 BEGIN
 
-  column_std <= std_logic_vector(to_unsigned(column, 10));
-  row_div2 <= shift_right(to_unsigned(row, 12), 1);
+  column_std <= std_logic_vector(to_unsigned(column, 10)); -- como nao cabe na memoria da fpga todos os pixels, fazemos uma gambiarra
+  row_div2 <= shift_right(to_unsigned(row, 12), 1); -- divide linha por 2, prenche um quadrado 2x2 para cada pixel
   video_address <= std_logic_vector(
-              (shift_left(row_div2, 3)) 
+              (shift_left(row_div2, 3)) -- como cada 10 palavras pintam uma linha (10palavras* 2colunas * 32bits)= 640,  fazemos row_div*8 + row_div*2
             + (shift_left(row_div2, 1)) 
-            + (shift_right(to_unsigned(column, 12), 6)));  
+            + (shift_right(to_unsigned(column, 12), 6)));--como uma palavra pinta 64 colunas, fazemos divisao por 64
   
-  pixel <= video_out(31-to_integer(unsigned(column_std(5 downto 1))));
+  pixel <= video_out(31-to_integer(unsigned(column_std(5 downto 1)))); -- pintana tela 0x0 a mposicao mais significativa da word
   
   VGA_R <= (others => pixel) when disp_ena='1' else (others => '0');
   VGA_G <= (others => pixel) when disp_ena='1' else (others => '0');
