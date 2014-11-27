@@ -139,7 +139,7 @@ begin
 		data_in_last_modified_register <= data_to_write_in_register;
 		
 		jump_address <= address_of_next_instruction(31 downto 26) & jump_offset;
-		branch_address <= address_of_next_instruction(31 downto 0) + offset;
+		branch_address <= address_of_next_instruction(31 downto 26) + offset;
 		
 		
 

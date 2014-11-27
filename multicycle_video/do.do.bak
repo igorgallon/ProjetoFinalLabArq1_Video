@@ -63,7 +63,7 @@ add wave -group relatorio -radix hexadecimal sim:/t_processor/the_processor/beq_
 add wave -group relatorio -radix hexadecimal sim:/t_processor/the_processor/bne_control
 add wave -group relatorio -radix hexadecimal sim:/t_processor/the_processor/instruction_address
 
-WaveRestoreCursors {{bne t0,t1,1 F} {124385 ps} 1} {{bne t2,t0,7 T} {205154 ps} 1} {{beq t2,t0,1 F} {235000 ps} 1} {{beq t0,t1,12 T} {355359 ps} 1} {{bne to,t2,7 F} {464572 ps} 1} {{Cursor 6} {59319 ps} 0}
+WaveRestoreCursors {{bne t0,t1,1} {124385 ps} 1} {{bne t2,t0,7} {205154 ps} 1} {{beq t2,t0,1} {283500 ps} 1} {{beq t0,t1,12} {365000 ps} 1} {{beq t0,t0,1} {444231 ps} 1}
 
 configure wave -shortnames 1
 

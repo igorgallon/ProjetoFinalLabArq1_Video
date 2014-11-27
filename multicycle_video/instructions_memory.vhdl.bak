@@ -57,7 +57,7 @@ architecture behavioral of instructions_memory is
     --	lw $t0, 0($zero)
      8 => X"8C080000",
     --	beq $t0,$t1,12
-     9 => X"110A0001",
+     9 => X"11090001",
     --	beq $t0,$t0,1
      10 => X"1108FFF5",
     --12: j 3
