@@ -15,9 +15,8 @@ entity control_unit is
 		alu_operation: out std_logic_vector (2 downto 0);
 		read_memory, write_memory: out std_logic;
 		offset: out std_logic_vector (31 downto 0);
-		jump_control: out std_logic;
-		jump_offset: out std_logic_vector(25 downto 0);
-		beq_control, bne_control: out std_logic);
+		jump_control,branch_op,not_equal : out std_logic;
+		jump_offset: out std_logic_vector(25 downto 0));
 end control_unit;
 
 architecture behavioral of control_unit is
@@ -25,13 +24,13 @@ architecture behavioral of control_unit is
 	signal next_state: state := fetch;
 	signal opcode: std_logic_vector(5 downto 0);
 
-	constant lw: std_logic_vector (5 downto 0) := "100011";
-	constant sw: std_logic_vector (5 downto 0) := "101011";
-	constant  r: std_logic_vector (5 downto 0) := "000000";
-	constant  j: std_logic_vector (5 downto 0) := "000010";
-	constant beq: std_logic_vector(5 downto 0) := "000100";
-	constant bne: std_logic_vector(5 downto 0) := "000101";
-	
+	constant  lw: std_logic_vector (5 downto 0) := "100011";
+	constant  sw: std_logic_vector (5 downto 0) := "101011";
+	constant   r: std_logic_vector (5 downto 0) := "000000";
+	constant   j: std_logic_vector (5 downto 0) := "000010";
+	constant beq: std_logic_vector (5 downto 0) := "000100";
+	constant bne: std_logic_vector (5 downto 0) := "000101";
+	constant addi:std_logic_vector (5 downto 0) := "001000";
 
 	function extend_to_32(input: std_logic_vector (15 downto 0)) return std_logic_vector is 
 	variable s: signed (31 downto 0);
@@ -58,14 +57,14 @@ begin
 		enable_alu_output_register <= '0';
 		enable_program_counter <= '0';
 		jump_control <= '0';
+		branch_op <= '0';
+		not_equal<= '0';
 		read_memory <= '0';
 		reg_dst <= '0';
 		source_alu <= '0';
    	mem_to_register <= '0';
 		write_memory <= '0';
 		write_register <= '0';
-		beq_control <= '0';
-		bne_control <= '0';
 
 		case next_state is
 
@@ -80,7 +79,9 @@ begin
 
 			when alu =>
 				enable_alu_output_register <= '1';
-				alu_operation <= "010";
+				if opcode= beq OR opcode=bne then alu_operation <= "011";
+				else alu_operation <= "010";
+				end if;
 
 				if opcode = lw then
       		source_alu <= '1';
@@ -89,16 +90,18 @@ begin
       		source_alu <= '1';
 					next_state <= mem;
 				elsif opcode = j then
-   			  jump_control <= '1';
+     			jump_control <= '1';
 				  next_state <= fetch;
-				elsif opcode = beq then
-				  beq_control <= '1';
-				  alu_operation <= "011";
+				  elsif opcode = beq then
+				  branch_op <= '1';
 				  next_state <= fetch;
-    		  elsif opcode = bne then
-				  bne_control <= '1';
-				  alu_operation <= "011";
+				  elsif opcode = bne then
+				  branch_op <= '1';
+				  not_equal <= '1';
 				  next_state <= fetch;
+				  elsif opcode = addi then
+				  source_alu <= '1';
+				  next_state <= writeback;
 				else --if opcode = r then
 					next_state <= writeback;
 				end if;
@@ -117,7 +120,7 @@ begin
 				-- write regiter result
         if opcode = lw then
    				mem_to_register <= '1';
-        else
+        elsif opcode /= addi then
 				  reg_dst <= '1';
         end if;
 				write_register <= '1';

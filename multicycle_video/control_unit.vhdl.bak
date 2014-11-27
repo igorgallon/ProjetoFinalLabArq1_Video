@@ -16,8 +16,7 @@ entity control_unit is
 		read_memory, write_memory: out std_logic;
 		offset: out std_logic_vector (31 downto 0);
 		jump_control: out std_logic;
-		jump_offset: out std_logic_vector(25 downto 0);
-		beq_control, bne_control: out std_logic);
+		jump_offset: out std_logic_vector(25 downto 0));
 end control_unit;
 
 architecture behavioral of control_unit is
@@ -29,9 +28,6 @@ architecture behavioral of control_unit is
 	constant sw: std_logic_vector (5 downto 0) := "101011";
 	constant  r: std_logic_vector (5 downto 0) := "000000";
 	constant  j: std_logic_vector (5 downto 0) := "000010";
-	constant beq: std_logic_vector(5 downto 0) := "000100";
-	constant bne: std_logic_vector(5 downto 0) := "000101";
-	
 
 	function extend_to_32(input: std_logic_vector (15 downto 0)) return std_logic_vector is 
 	variable s: signed (31 downto 0);
@@ -64,8 +60,6 @@ begin
    	mem_to_register <= '0';
 		write_memory <= '0';
 		write_register <= '0';
-		beq_control <= '0';
-		bne_control <= '0';
 
 		case next_state is
 
@@ -89,15 +83,7 @@ begin
       		source_alu <= '1';
 					next_state <= mem;
 				elsif opcode = j then
-   			  jump_control <= '1';
-				  next_state <= fetch;
-				elseif opcode = beq then
-				  beq_control <= '1';
-				  alu_operation <= "011";
-				  next_state <= fetch;
-    		  elseif opcode = bne then
-				  bne_control <= '1';
-				  alu_operation <= "011";
+     			jump_control <= '1';
 				  next_state <= fetch;
 				else --if opcode = r then
 					next_state <= writeback;
