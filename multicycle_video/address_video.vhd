@@ -21,7 +21,7 @@ signal pixel: std_logic;
 signal row_div2 : unsigned(11 downto 0);
 
 BEGIN
-
+  
   column_std <= std_logic_vector(to_unsigned(column, 10)); -- como nao cabe na memoria da fpga todos os pixels, fazemos uma gambiarra
   row_div2 <= shift_right(to_unsigned(row, 12), 1); -- divide linha por 2, prenche um quadrado 2x2 para cada pixel
   video_address <= std_logic_vector(

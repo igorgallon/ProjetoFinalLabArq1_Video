@@ -81,11 +81,18 @@ component dec7seg
     segment   : out STD_LOGIC_VECTOR(6 downto 0));
 END component;
 
+component video_decoder
+	PORT(
+		clock: std_logic;
+		video_out: in std_logic_vector (31 downto 0);
+		modified_video_out: out std_logic_vector(31 downto 0));
+END component;
 
 SIGNAL disp_ena, pixel_clk: std_logic;
 SIGNAL row, column: integer;
 SIGNAL video_address: std_LOGIC_VECTOR(11 downto 0);
 signal instruction_address, current_instruction, data_in_last_modified_register, video_out: std_logic_vector(31 downto 0);
+signal mod_video_out: std_logic_vector(31 downto 0);
 
 BEGIN
 
@@ -120,6 +127,10 @@ BEGIN
     data_in_last_modified_register, 
     video_out, video_address);
 
+  decoder_mem: video_decoder port map(
+	video_out,
+	mod_video_out);
+	
   docoder: address_video port map (
     column,
     row,
