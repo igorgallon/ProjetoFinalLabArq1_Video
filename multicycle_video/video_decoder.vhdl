@@ -46,16 +46,24 @@ architecture behavioral of video_decoder is
    others => (others => '0'));
 --pragma synthesis_on
 
-begin
+signal contador: std_logic_vector(3 downto 0);
+signal std_logic_vector (data_width - 1 downto 0);
+constant zeroes: std_logic_vector(width - 1 downto 0) := (others => '0');
 
-	--copiado do data_memory, não funcional!
+
+begin
    
  	read_video: process (clock)
 		variable index: integer;
 	begin
    if(rising_edge(clock)) then -- Port B
-			index := to_integer(unsigned(video_address));
-			video_out <= data(index);
+			if(contador="1010") then
+				index := to_integer(unsigned(video_address));
+				modified_video_out <= ( zeroes(31 downto 8)	& data(index)(7 downto 0)) ;
+				contador <="0000";
+			elsif
+				contador <= contador + '1' ;
+			end if;
    end if;
 	end process;
 
