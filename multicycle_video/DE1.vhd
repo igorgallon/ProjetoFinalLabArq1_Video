@@ -128,6 +128,7 @@ BEGIN
     video_out, video_address);
 
   decoder_mem: video_decoder port map(
+	pixel_clk,
 	video_out,
 	mod_video_out);
 	
@@ -135,7 +136,7 @@ BEGIN
     column,
     row,
     disp_ena,
-    video_out,
+    mod_video_out,
     video_address,
 		VGA_R,
 		VGA_G,
