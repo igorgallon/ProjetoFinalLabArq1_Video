@@ -56,12 +56,12 @@ type data_sequence is array (0 to address_width-1) of std_logic_vector (rom_widt
 --signal contador: std_logic_vector(3 downto 0);
 --signal std_logic_vector (data_width - 1 downto 0);
 constant zeroes: std_logic_vector(data_width - 1 downto 0) := (others => '0');
-signal row_div2 : unsigned(11 downto 0);
+signal row_div2 : unsigned(2 downto 0);
 
 
 begin
-   
-	row_div2 <= shift_right(to_unsigned(row, 12), 1);
+   --(row mod 2) div 8
+	row_div2 <= shift_right(to_unsigned(row, 4), 1)(2 downto 0);
 	
  	read_video: process (clock)
 		variable char1: integer;
@@ -74,10 +74,10 @@ begin
 	begin
 	
    if(rising_edge(clock)) then 
-			char0 := to_integer((shift_right(unsigned(video_out), 24 ))) + to_integer(row_div2);
-			char1 := to_integer((shift_right(unsigned(video_out), 16 )))+ to_integer(row_div2);
-			char2 := to_integer((shift_right(unsigned(video_out), 8 )))+ to_integer(row_div2);
-			char3 :=  to_integer(unsigned(video_out))+ to_integer(row_div2);
+			char0 := to_integer((shift_right(unsigned(video_out), 24 )))*10 + to_integer(row_div2);
+			char1 := to_integer((shift_right(unsigned(video_out), 16 )))*10+ to_integer(row_div2);
+			char2 := to_integer((shift_right(unsigned(video_out), 8 )))*10+ to_integer(row_div2);
+			char3 :=  to_integer(unsigned(video_out))*10+ to_integer(row_div2);
 			modified_video_out <= ( data(char0)(rom_width-1 downto 0)
 											& data(char1)(rom_width-1 downto 0)
 											& data(char2)(rom_width-1 downto 0)
