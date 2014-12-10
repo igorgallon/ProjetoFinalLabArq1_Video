@@ -83,7 +83,8 @@ END component;
 
 component video_decoder
 	PORT(
-		clock: std_logic;
+		clock: in std_logic;
+		row          : IN  INTEGER;
 		video_out: in std_logic_vector (31 downto 0);
 		modified_video_out: out std_logic_vector(31 downto 0));
 END component;
@@ -129,6 +130,7 @@ BEGIN
 
   decoder_mem: video_decoder port map(
 	pixel_clk,
+	row,
 	video_out,
 	mod_video_out);
 	
