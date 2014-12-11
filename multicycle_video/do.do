@@ -61,6 +61,10 @@ add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char0
 add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char1
 add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char2
 add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char3
+add wave -group video -radix octal sim:/t_processor/decoder_mem/char0_std
+add wave -group video -radix octal sim:/t_processor/decoder_mem/char1_std
+add wave -group video -radix octal sim:/t_processor/decoder_mem/char2_std
+add wave -group video -radix octal sim:/t_processor/decoder_mem/char3_std
 
 configure wave -shortnames 1
 

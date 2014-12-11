@@ -21,12 +21,12 @@ architecture behavioral of data_memory is
 	type data_sequence is array (0 to 2**address_width - 1) of std_logic_vector (data_width - 1 downto 0);  
 -- ModelSim
 	signal data: data_sequence := (
-     0 => X"0F110E05",
-	  1 => X"0412120E",
-	  2 => X"11242413",
-	  3 => X"11000124",
-	  4 => X"0D0E1300",
-	  5 => X"241B1A24",
+     0 => X"00010203",
+	  1 => X"04050607",
+	  2 => X"08091011",
+	  3 => X"12131415",
+	  4 => X"16171819",
+	  5 => X"20212223",
 
 	others => X"04030605");
 

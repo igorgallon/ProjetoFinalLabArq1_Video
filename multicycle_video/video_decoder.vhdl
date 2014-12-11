@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 
 entity video_decoder is
 	generic (
-		address_width: integer := 9;
+		address_width: integer := 8;
 		data_width: integer := 32;
 		rom_width: integer := 8);
 
@@ -34,10 +34,12 @@ type data_sequence is array (0 to 2**address_width-1) of std_logic_vector (rom_w
 --synthesis read_comments_as_HDL on
 
 
-  -- signal data,data2: data_sequence;
+  -- signal data0, data1, data2, data3: data_sequence;
   -- attribute ram_init_file : string;
-  -- attribute ram_init_file of data : signal is "chars.mif";
+  -- attribute ram_init_file of data0 : signal is "chars.mif";
+  -- attribute ram_init_file of data1 : signal is "chars2.mif";
   -- attribute ram_init_file of data2 : signal is "chars.mif";
+  -- attribute ram_init_file of data3 : signal is "chars2.mif";
 
  --synthesis read_comments_as_HDL off
 
@@ -58,6 +60,10 @@ type data_sequence is array (0 to 2**address_width-1) of std_logic_vector (rom_w
 --signal std_logic_vector (data_width - 1 downto 0);
 constant zeroes: std_logic_vector(data_width - 1 downto 0) := (others => '0');
 signal row_div2 : unsigned(2 downto 0);
+signal char0_std: std_logic_vector (rom_width - 1 downto 0);
+signal char1_std: std_logic_vector (rom_width - 1 downto 0);
+signal char2_std: std_logic_vector (rom_width - 1 downto 0);
+signal char3_std: std_logic_vector (rom_width - 1 downto 0);
 
 
 begin
@@ -81,10 +87,31 @@ begin
 			char1 := to_integer(shift_left(unsigned(video_out(15 downto  8)),3));
 			char2 := to_integer(shift_left(unsigned(video_out(23 downto  16)),3));
 			char3 := to_integer(shift_left(unsigned(video_out(31 downto  24)),3));
-			modified_video_out <= 								  data(char3 + to_integer(row_div2))
-																		& data(char2 + to_integer(row_div2))
-																		& data2(char1 + to_integer(row_div2))
-																		& data2(char0 + to_integer(row_div2));
+			if(char0 > 31) then
+				char0_std <= "00000001"; --data1(char0 + to_integer(row_div2));
+			else
+				char0_std <= "00000000"; --data0(char0 + to_integer(row_div2));
+			end if;
+			
+			if(char1 > 31) then
+				char1_std <= "00000001"; --data1(char1 + to_integer(row_div2));
+			else
+				char1_std <= "00000000"; --data0(char1 + to_integer(row_div2));
+			end if;
+			
+			if(char2 > 31) then
+				char2_std <= "00000011";--data3(char2 + to_integer(row_div2));
+			else
+				char2_std <= "00000011";--data2(char2 + to_integer(row_div2));
+			end if;
+			
+			if(char3 > 31) then
+				char3_std <= "00000011";--data3(char3 + to_integer(row_div2));
+			else
+				char3_std <= "00000010";--data2(char2 + to_integer(row_div2));
+			end if;
+						
+			modified_video_out <= 	zeroes;--char3_std & char2_std & char1_std & char0_std;
 	
 --			char0 := to_integer(unsigned(video_out(31 downto 24)))*10+ to_integer(row_div2);
 --			char1 := to_integer(unsigned(video_out(23 downto 16)))*10+ to_integer(row_div2);
