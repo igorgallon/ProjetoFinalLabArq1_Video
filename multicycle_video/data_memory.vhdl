@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 
 entity data_memory is
 	generic (
-		address_width: integer := 12;
+		address_width: integer := 9;
 		data_width: integer := 32);
 
 	port (
@@ -21,8 +21,12 @@ architecture behavioral of data_memory is
 	type data_sequence is array (0 to 2**address_width - 1) of std_logic_vector (data_width - 1 downto 0);  
 -- ModelSim
 	signal data: data_sequence := (
-     0 => "00000000000000000000001000000001",
-	  1 => X"00000000",
+     0 => X"0F110E05",
+	  1 => X"0412120E",
+	  2 => X"11242413",
+	  3 => X"11000124",
+	  4 => X"0D0E1300",
+	  5 => X"241B1A24",
 
 	others => X"04030605");
 

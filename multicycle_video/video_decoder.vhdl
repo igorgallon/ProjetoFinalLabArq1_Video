@@ -37,6 +37,7 @@ type data_sequence is array (0 to 2**address_width-1) of std_logic_vector (rom_w
   -- signal data,data2: data_sequence;
   -- attribute ram_init_file : string;
   -- attribute ram_init_file of data : signal is "chars.mif";
+  -- attribute ram_init_file of data2 : signal is "chars.mif";
 
  --synthesis read_comments_as_HDL off
 
@@ -62,14 +63,13 @@ signal row_div2 : unsigned(2 downto 0);
 begin
    --(row mod 2) div 8
 	row_div2 <= shift_right(to_unsigned(row, 4), 1)(2 downto 0);
-	data2<=data;
 	
  	read_video: process (clock)
 		variable char1: integer;
 		variable char2: integer;
 		variable char3: integer;
 		variable char0: integer;
-		variable index: integer;
+		--variable index: integer;
 		--variable row_div2: unsigned;
 --		variable coluna: integer:=9;
 --		variable linha: integer:=0;
@@ -81,8 +81,8 @@ begin
 			char1 := to_integer(shift_left(unsigned(video_out(15 downto  8)),3));
 			char2 := to_integer(shift_left(unsigned(video_out(23 downto  16)),3));
 			char3 := to_integer(shift_left(unsigned(video_out(31 downto  24)),3));
-			modified_video_out <=  zeroes(31 downto 16)	--& data(char3 + to_integer(row_div2))
-																		--& data(char2 + to_integer(row_div2))(7 downto 0)
+			modified_video_out <= 								  data(char3 + to_integer(row_div2))
+																		& data(char2 + to_integer(row_div2))
 																		& data2(char1 + to_integer(row_div2))
 																		& data2(char0 + to_integer(row_div2));
 	
