@@ -18,7 +18,7 @@ end video_decoder;
 
 architecture behavioral of video_decoder is
 
-type data_sequence is array (0 to address_width-1) of std_logic_vector (rom_width - 1 downto 0);
+type data_sequence is array (0 to 2**address_width-1) of std_logic_vector (rom_width - 1 downto 0);
 
 -- Quartus II
 --	signal data: data_sequence;
@@ -34,7 +34,7 @@ type data_sequence is array (0 to address_width-1) of std_logic_vector (rom_widt
 --synthesis read_comments_as_HDL on
 
 
-  -- signal data: data_sequence;
+  -- signal data,data2: data_sequence;
   -- attribute ram_init_file : string;
   -- attribute ram_init_file of data : signal is "chars.mif";
 
@@ -62,6 +62,7 @@ signal row_div2 : unsigned(2 downto 0);
 begin
    --(row mod 2) div 8
 	row_div2 <= shift_right(to_unsigned(row, 4), 1)(2 downto 0);
+	data2<=data;
 	
  	read_video: process (clock)
 		variable char1: integer;
@@ -76,14 +77,14 @@ begin
 	
    if(rising_edge(clock)) then 
 			
-			char0 := to_integer(shift_left(unsigned(video_out( 7 downto  0)),0));
-			char1 := to_integer(shift_left(unsigned(video_out(15 downto  8)),0));
+			char0 := to_integer(shift_left(unsigned(video_out( 7 downto  0)),3));
+			char1 := to_integer(shift_left(unsigned(video_out(15 downto  8)),3));
 			char2 := to_integer(shift_left(unsigned(video_out(23 downto  16)),3));
 			char3 := to_integer(shift_left(unsigned(video_out(31 downto  24)),3));
-			modified_video_out <= ( zeroes(31 downto 16)	--& data(char3 + to_integer(row_div2))
-																		--& data(char2 + to_integer(row_div2))
-																		& data(char1 + to_integer(row_div2))
-																		& data(char0 + to_integer(row_div2))) ;
+			modified_video_out <=  zeroes(31 downto 16)	--& data(char3 + to_integer(row_div2))
+																		--& data(char2 + to_integer(row_div2))(7 downto 0)
+																		& data2(char1 + to_integer(row_div2))
+																		& data2(char0 + to_integer(row_div2));
 	
 --			char0 := to_integer(unsigned(video_out(31 downto 24)))*10+ to_integer(row_div2);
 --			char1 := to_integer(unsigned(video_out(23 downto 16)))*10+ to_integer(row_div2);
