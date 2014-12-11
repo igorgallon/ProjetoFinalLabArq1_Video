@@ -87,31 +87,31 @@ begin
 			char1 := to_integer(shift_left(unsigned(video_out(15 downto  8)),3));
 			char2 := to_integer(shift_left(unsigned(video_out(23 downto  16)),3));
 			char3 := to_integer(shift_left(unsigned(video_out(31 downto  24)),3));
-			if(char0 > 31) then
-				char0_std <= "00000001"; --data1(char0 + to_integer(row_div2));
+			if(char0 >= 256) then
+				char0_std <= data1(char0 + to_integer(row_div2));
 			else
-				char0_std <= "00000000"; --data0(char0 + to_integer(row_div2));
+				char0_std <= data0(char0 + to_integer(row_div2));
 			end if;
 			
-			if(char1 > 31) then
-				char1_std <= "00000001"; --data1(char1 + to_integer(row_div2));
+			if(char1 >= 256) then
+				char1_std <= data1(char1 + to_integer(row_div2));
 			else
-				char1_std <= "00000000"; --data0(char1 + to_integer(row_div2));
+				char1_std <= data0(char1 + to_integer(row_div2));
 			end if;
 			
-			if(char2 > 31) then
-				char2_std <= "00000011";--data3(char2 + to_integer(row_div2));
+			if(char2 >= 256) then
+				char2_std <=data3(char2 + to_integer(row_div2));
 			else
-				char2_std <= "00000011";--data2(char2 + to_integer(row_div2));
+				char2_std <= data2(char2 + to_integer(row_div2));
 			end if;
 			
-			if(char3 > 31) then
-				char3_std <= "00000011";--data3(char3 + to_integer(row_div2));
+			if(char3 >= 256) then
+				char3_std <= data3(char3 + to_integer(row_div2));
 			else
-				char3_std <= "00000010";--data2(char2 + to_integer(row_div2));
+				char3_std <= data2(char3 + to_integer(row_div2));
 			end if;
 						
-			modified_video_out <= 	zeroes;--char3_std & char2_std & char1_std & char0_std;
+			modified_video_out <= 	char3_std & char2_std & char1_std & char0_std;
 	
 --			char0 := to_integer(unsigned(video_out(31 downto 24)))*10+ to_integer(row_div2);
 --			char1 := to_integer(unsigned(video_out(23 downto 16)))*10+ to_integer(row_div2);
