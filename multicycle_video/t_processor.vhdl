@@ -14,6 +14,8 @@ architecture behavioral of t_processor is
 	signal data_in_last_modified_register, instruction_address: std_logic_vector (31 downto 0);
 			signal expected: std_logic_vector (31 downto 0) := 			"00000000000000000000000000101010";
 	signal video_address: std_logic_vector(11 downto 0);
+	
+	signal mod_video_out: std_logic_vector(31 downto 0);
 
 
 
@@ -30,7 +32,7 @@ SIGNAL 		disp_ena_d 		:	STD_LOGIC_VECTOR(2 downto 0);
 
 SIGNAL VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS: std_logic;
 
-signal row_div2 : unsigned(11 downto 0);
+signal row_div16 : unsigned(11 downto 0);
 
 
 	component processor 
@@ -40,6 +42,14 @@ signal row_div2 : unsigned(11 downto 0);
     video_address: in std_logic_vector(11 downto 0));
 	end component;
 	
+	component video_decoder
+	PORT(
+		clock: in std_logic;
+		row          : IN  INTEGER;
+		video_out: in std_logic_vector (31 downto 0);
+		modified_video_out: out std_logic_vector(31 downto 0));
+END component;
+
 	COMPONENT vga_controller
   GENERIC(
     h_pulse   :  INTEGER   := 96;    --horiztonal sync pulse width in pixels
@@ -69,6 +79,12 @@ begin
 		the_processor: processor port map (clock, turn_off, instruction_address, current_instruction, 			data_in_last_modified_register, video_out, video_address);
 
     video_card: vga_controller port map (clock, '1', VGA_HS_d(0), VGA_VS_d(0), disp_ena_d(0), column, row);
+    
+    decoder_mem: video_decoder port map(
+	clock,
+	row,
+	video_out,
+	mod_video_out);
 
   VGA_R <= pixel when disp_ena='1' else '0';
   VGA_G <= pixel when disp_ena='1' else '0';
@@ -81,12 +97,12 @@ begin
 
   column_std <= std_logic_vector(to_unsigned(column, 10));
 
-  row_div2 <= shift_right(to_unsigned(row, 12), 1);
+  row_div16 <= shift_right(to_unsigned(row, 12), 4); -- divide linha por 2, depois por 8, prenche um quadrado 2x2 para cada pixel
 
   video_address <= std_logic_vector(
-              (shift_left(row_div2, 3)) 
-            + (shift_left(row_div2, 1)) 
-            + (shift_right(to_unsigned(column, 12), 6)));  
+              (shift_left(row_div16, 3)) -- como cada 10 palavras pintam uma linha (10palavras* 2colunas * 32bits)= 640,  fazemos row_div*8 + row_div*2
+            + (shift_left(row_div16, 1)) 
+            + (shift_right(to_unsigned(column, 12), 6)));--como uma palavra pinta 64 colunas, fazemos divisao por 64  
 
   pixel <= video_out(31-to_integer(unsigned(column_std(5 downto 1))));
 
