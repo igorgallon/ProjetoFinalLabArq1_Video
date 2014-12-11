@@ -62,10 +62,7 @@ add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char1
 add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char2
 add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char3
 
-
-
 configure wave -shortnames 1
-WaveRestoreCursors { "BEQ jump" {289706 ps} 1} {"BEQ not jump" {540675 ps} 1} {"BNE not jump" {570826 ps} 1} {"BNE jump" {599130 ps} 1} {"ADDI working" {634189 ps} 1}
 
 run 3000 ns
 
