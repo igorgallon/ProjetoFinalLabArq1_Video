@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.STD_LOGIC_UNSIGNED.ALL;
+use ieee.numeric_std.all;
 
 entity processor is
 	port (clock, turn_off: in std_logic;
@@ -48,7 +49,8 @@ architecture behavioral of processor is
     enable_alu_output_register: out std_logic := '0';
 		register1, register2, register3: out std_logic_vector (4 downto 0);
 		write_register, mem_to_register: out std_logic;
-		source_alu, reg_dst: out std_logic;
+		reg_dst: out std_logic;
+		source_alu: out std_logic_vector(1 downto 0);
 		alu_operation: out std_logic_vector (2 downto 0);
 		read_memory, write_memory: out std_logic;
 		offset: out std_logic_vector (31 downto 0);
@@ -112,7 +114,8 @@ architecture behavioral of processor is
 	signal alu_operand1, alu_operand2: std_logic_vector(31 downto 0);
 	signal register_a, register_b, alu_result, 		
 	  data_from_alu_output_register: std_logic_vector (31 downto 0);
-	signal source_alu, reg_dst: std_logic;
+	signal reg_dst: std_logic;
+	signal source_alu: std_logic_vector(1 downto 0);
 	signal alu_operation: std_logic_vector (2 downto 0); 
 
 	-- Signals related to the memory access.
@@ -125,9 +128,9 @@ begin
     instruction_address <= address_of_next_instruction;
 		alu_operand1 <= register_a;
 		
-		alu_operand2 <= register_b when source_alu = "00" elsif
+		alu_operand2 <= register_b when source_alu = "00" else
 							 offset when source_alu = "01" else
-							 shift_right(unsigned(offset),6);
+							 std_logic_vector(shift_right(unsigned(offset),6))(31 downto 0);
 		data_to_write_in_register <= data_from_memory when mem_to_register = '1' else data_from_alu_output_register; 
 		destination_register <= register2 when reg_dst = '0' else register3;
 		
@@ -168,9 +171,9 @@ begin
 		  register2, 
 		  register3, 
       write_register,
-		  mem_to_register, 
-		  source_alu, 
+		  mem_to_register,  
 		  reg_dst,
+		  source_alu,
 		  alu_operation, 			
 		  read_memory, 
 		  write_memory, 

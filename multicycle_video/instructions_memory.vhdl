@@ -20,34 +20,37 @@ architecture behavioral of instructions_memory is
 	type instructions_sequence is array (0 to length) of std_logic_vector (data_width - 1 downto 0);
 	signal instructions: instructions_sequence :=
 		-- lw $t0, 0($0)
-   (0 => X"8C080000",
+   (0 => X"20080000",
 		-- lw $t1, 0($0)
-    1 => X"8C090000",
+    1 => X"200C0014",
+	 
+	 2 => X"00084A00",
 		-- lw $t2, 1($0)
-		2 => X"8C0A0001",
---		-- add $t0, $t0, $t1
---		3 => X"01094020",
---		-- add $t1, $t1, $t1
---		4 => X"01294820",
---		-- sw $t2, 0($t0)
---		--4 => X"AD0A0000",
---		-- sw $t0, 0($t0)
---		5 => X"AD080000",
---		-- beq $t1, $t0, -6
---		6 => X"1128FFFA",
---		--j 3
---		--7 => X"08000003",
---		--bne,$t0, $t0, -6
---		7 => X"1508FFFA",
---		--bne,$t2, $t0, 1
---		8 => X"15480001",
---		--addi $t2,$0, A
---		9 => X"200A000A",
---		--addi $t2,$0, A
---		10 => X"200A000A",
---		--add $t2,$t2, $t2
---		11 => X"014A5020",
+	 3 => X"01285025",
+		-- add $t0, $t0, $t1
+	 4 => X"00084C00",
+		-- add $t1, $t1, $t1
+	 5 => X"01495025",
+		-- sw $t2, 0($t0)
+		--4 => X"AD0A0000",
+		-- sw $t0, 0($t0)
+	 6 => X"00084E00",
+		-- beq $t1, $t0, -6
+	 7 => X"01495025",
+		--j 3
+		--7 => X"08000003",
+		--bne,$t0, $t0, -6
+	 8 => X"200B000E",
+		--bne,$t2, $t0, 1
+	 9 => X"AD6A0000",
+		--addi $t2,$0, A
+	 10 => X"216B0001",
+	 
+	 11 => X"156CFFFE",
 		
+	 12 => X"21080001",
+	
+    13 => X"08000C02",	
 		others => (others => 'U'));
 
 begin

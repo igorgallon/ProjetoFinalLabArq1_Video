@@ -11,7 +11,8 @@ entity control_unit is
 		enable_alu_output_register: out std_logic := '0';
 		register1, register2, register3: out std_logic_vector (4 downto 0);
 		write_register, mem_to_register: out std_logic;
-		source_alu, reg_dst: out std_logic;
+		reg_dst: out std_logic;
+		source_alu: out std_logic_vector(1 downto 0);
 		alu_operation: out std_logic_vector (2 downto 0);
 		read_memory, write_memory: out std_logic;
 		offset: out std_logic_vector (31 downto 0);
@@ -32,7 +33,7 @@ architecture behavioral of control_unit is
 	constant bne: std_logic_vector (5 downto 0) := "000101";
 	constant addi:std_logic_vector (5 downto 0) := "001000";
 	constant ori: std_logic_vector(5 downto 0) := "001101";
-	constant _sll: std_logic_vector(5 downto 0):= "000000"; 
+	constant Fsll: std_logic_vector(5 downto 0):= "000000"; 
 
 	function extend_to_32(input: std_logic_vector (15 downto 0)) return std_logic_vector is 
 	variable s: signed (31 downto 0);
@@ -63,7 +64,7 @@ begin
 		not_equal<= '0';
 		read_memory <= '0';
 		reg_dst <= '0';
-		source_alu_a <= "00";
+		source_alu <= "00";
    	mem_to_register <= '0';
 		write_memory <= '0';
 		write_register <= '0';
@@ -108,7 +109,7 @@ begin
 				  source_alu <= "01";
 				  alu_operation <= "001";
 				  next_state <= writeback;
-            elsif funct = funct_sll then
+            elsif opcode = Fsll then
               source_alu <= "10";
               alu_operation <= "101";
               next_state <= writeback;
