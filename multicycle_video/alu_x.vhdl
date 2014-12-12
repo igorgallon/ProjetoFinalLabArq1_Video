@@ -18,6 +18,12 @@ architecture structural of alu_x is
 		result: out std_logic_vector (width - 1 downto 0));
 	end component;
 
+	component sll_x 
+      generic (width: integer := 32);
+      port (a, b: in std_logic_vector (width - 1 downto 0);
+      result: out std_logic_vector (width - 1 downto 0));
+   end component;
+	
 	component or_x 
 		generic (width: integer := 32);
 		port (a, b: in std_logic_vector (width - 1 downto 0);
@@ -63,6 +69,7 @@ end component;
 		adder: full_adder_x generic map (width) port map (a, b, x2);
 		subtractor: subtractor_x generic map (width) port map (a, b, x3);
 		slt: slt_x generic map (width) port map (a, b, x4);
+		Fsll: sll_x generic map (width) port map (a, b, x5);
 		multx: multiplexer generic map (width) port map (x0, x1, x2, x3, x4, x5, x6, x7, 			operation, result_int);
  
 end structural;

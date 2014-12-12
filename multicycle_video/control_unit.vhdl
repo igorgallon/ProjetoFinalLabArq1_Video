@@ -31,6 +31,8 @@ architecture behavioral of control_unit is
 	constant beq: std_logic_vector (5 downto 0) := "000100";
 	constant bne: std_logic_vector (5 downto 0) := "000101";
 	constant addi:std_logic_vector (5 downto 0) := "001000";
+	constant ori: std_logic_vector(5 downto 0) := "001101";
+	constant _sll: std_logic_vector(5 downto 0):= "000000"; 
 
 	function extend_to_32(input: std_logic_vector (15 downto 0)) return std_logic_vector is 
 	variable s: signed (31 downto 0);
@@ -61,7 +63,7 @@ begin
 		not_equal<= '0';
 		read_memory <= '0';
 		reg_dst <= '0';
-		source_alu <= '0';
+		source_alu_a <= "00";
    	mem_to_register <= '0';
 		write_memory <= '0';
 		write_register <= '0';
@@ -84,24 +86,32 @@ begin
 				end if;
 
 				if opcode = lw then
-      		source_alu <= '1';
+      		   source_alu <= "01";
 					next_state <= mem;
 				elsif opcode = sw then
-      		source_alu <= '1';
+      		   source_alu <= "01";
 					next_state <= mem;
 				elsif opcode = j then
      			jump_control <= '1';
 				  next_state <= fetch;
-				  elsif opcode = beq then
+				elsif opcode = beq then
 				  branch_op <= '1';
 				  next_state <= fetch;
-				  elsif opcode = bne then
+				elsif opcode = bne then
 				  branch_op <= '1';
 				  not_equal <= '1';
 				  next_state <= fetch;
-				  elsif opcode = addi then
-				  source_alu <= '1';
+				elsif opcode = addi then
+				  source_alu <= "01";
 				  next_state <= writeback;
+				elsif opcode = ori then
+				  source_alu <= "01";
+				  alu_operation <= "001";
+				  next_state <= writeback;
+            elsif funct = funct_sll then
+              source_alu <= "10";
+              alu_operation <= "101";
+              next_state <= writeback;
 				else --if opcode = r then
 					next_state <= writeback;
 				end if;
@@ -122,6 +132,8 @@ begin
    				mem_to_register <= '1';
         elsif opcode /= addi then
 				  reg_dst <= '1';
+				elsif opcode = ori then
+          reg_dst <= '0';
         end if;
 				write_register <= '1';
 				next_state <= fetch;

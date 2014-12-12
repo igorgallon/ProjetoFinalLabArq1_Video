@@ -27,6 +27,7 @@ begin
 		x2 when selection = "010" else
 		x3 when selection = "011" else
 		x4 when selection = "100" else
+		x5 when selection = "101" else
 		unknown;
 
 end structural;

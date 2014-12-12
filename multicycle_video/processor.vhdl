@@ -125,7 +125,9 @@ begin
     instruction_address <= address_of_next_instruction;
 		alu_operand1 <= register_a;
 		
-		alu_operand2 <= register_b when source_alu = '0' else offset;
+		alu_operand2 <= register_b when source_alu = "00" elsif
+							 offset when source_alu = "01" else
+							 shift_right(unsigned(offset),6);
 		data_to_write_in_register <= data_from_memory when mem_to_register = '1' else data_from_alu_output_register; 
 		destination_register <= register2 when reg_dst = '0' else register3;
 		
