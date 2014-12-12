@@ -29,15 +29,11 @@ architecture behavioral of data_memory is
 	  5 => X"14151617",
 	  6 => X"18191A1B",
 	  7 => X"1C1D1E1F",
-	  8 => X"1F1F1F1F",
-	  9 => X"1F1F1F1F",
-	  10 => X"0F110E05",
-	  11 => X"0412120E",
-	  12 => X"111F0D0E",
-	  13 => X"13001F1B",
-	  14 => X"1A1F1F1F",
-
-	others => X"0411110E");
+	  8 => X"20212223",
+	  9 => X"24252627",
+	  10 => X"28292A2B",
+	  11 => X"2C2D2E24",
+	others => X"24242424");
 
 begin
 
