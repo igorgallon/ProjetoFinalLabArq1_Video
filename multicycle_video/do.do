@@ -47,7 +47,6 @@ add wave -group video sim:/t_processor/video_card/row
 add wave -group video sim:/t_processor/video_card/column
 add wave -group video -radix hexadecimal sim:/t_processor/video_address
 add wave -group video -radix hexadecimal sim:/t_processor/video_out
-add wave -group video -radix hexadecimal sim:/t_processor/pixel
 add wave -group video -radix hexadecimal sim:/t_processor/video_card/disp_ena
 add wave -group video -radix hexadecimal sim:/t_processor/video_card/h_sync
 add wave -group video -radix hexadecimal sim:/t_processor/video_card/v_sync
@@ -57,14 +56,8 @@ add wave -group video -radix hexadecimal sim:/t_processor/VGA_B
 add wave -group video sim:/t_processor/VGA_HS_d
 add wave -group video sim:/t_processor/VGA_VS_d
 add wave -group video sim:/t_processor/disp_ena_d
-add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char0
-add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char1
-add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char2
-add wave -group video -radix octal sim:/t_processor/decoder_mem/read_video/char3
-add wave -group video -radix octal sim:/t_processor/decoder_mem/char0_std
-add wave -group video -radix octal sim:/t_processor/decoder_mem/char1_std
-add wave -group video -radix octal sim:/t_processor/decoder_mem/char2_std
-add wave -group video -radix octal sim:/t_processor/decoder_mem/char3_std
+add wave -group video -radix hexadecimal sim:/t_processor/rom_out
+add wave -group video -radix hexadecimal sim:/t_processor/pixel
 
 configure wave -shortnames 1
 

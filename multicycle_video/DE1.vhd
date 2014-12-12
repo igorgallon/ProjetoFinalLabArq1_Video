@@ -83,17 +83,27 @@ END component;
 
 component video_decoder
 	PORT(
-		clock: in std_logic;
-		row          : IN  INTEGER;
+		column, row : IN  INTEGER;
 		video_out: in std_logic_vector (31 downto 0);
-		modified_video_out: out std_logic_vector(31 downto 0));
+		modified_video_out: out std_logic_vector(31 downto 0);
+		rom_in: in std_logic_vector(7 downto 0);
+		rom_address: out std_logic_vector (8 downto 0));
 END component;
+
+component rom_mem
+	PORT(
+	clock: std_logic;
+		rom_address: in std_logic_vector (8 downto 0);
+		rom_out: out std_logic_vector (7 downto 0));
+	END component;
 
 SIGNAL disp_ena, pixel_clk: std_logic;
 SIGNAL row, column: integer;
 SIGNAL video_address: std_LOGIC_VECTOR(11 downto 0);
 signal instruction_address, current_instruction, data_in_last_modified_register, video_out: std_logic_vector(31 downto 0);
 signal mod_video_out: std_logic_vector(31 downto 0);
+signal rom_out: std_logic_vector(7 downto 0);
+signal rom_address : std_logic_vector(8 downto 0);
 
 BEGIN
 
@@ -129,10 +139,16 @@ BEGIN
     video_out, video_address);
 
   decoder_mem: video_decoder port map(
-	pixel_clk,
-	row,
+	column,row,
 	video_out,
-	mod_video_out);
+	mod_video_out,
+	rom_out,--entra
+	rom_address);
+	
+  rom : rom_mem port map(
+	pixel_clk,
+	rom_address,
+	rom_out);
 	
   docoder: address_video port map (
     column,
@@ -152,5 +168,5 @@ BEGIN
     disp_ena, 
     column, 
     row);
-  
+
 END behavior;

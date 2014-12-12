@@ -34,6 +34,8 @@ SIGNAL VGA_R, VGA_G, VGA_B, VGA_HS, VGA_VS: std_logic;
 
 signal row_div16 : unsigned(11 downto 0);
 
+signal rom_out: std_logic_vector(7 downto 0);
+signal rom_address : std_logic_vector(8 downto 0);
 
 	component processor 
 	port (clock, turn_off: in std_logic;
@@ -44,10 +46,11 @@ signal row_div16 : unsigned(11 downto 0);
 	
 	component video_decoder
 	PORT(
-		clock: in std_logic;
-		row          : IN  INTEGER;
+		column, row          : IN  INTEGER;
 		video_out: in std_logic_vector (31 downto 0);
-		modified_video_out: out std_logic_vector(31 downto 0));
+		modified_video_out: out std_logic_vector(31 downto 0);
+		rom_in: in std_logic_vector(7 downto 0);
+		rom_address: out std_logic_vector (8 downto 0));
 END component;
 
 	COMPONENT vga_controller
@@ -81,10 +84,12 @@ begin
     video_card: vga_controller port map (clock, '1', VGA_HS_d(0), VGA_VS_d(0), disp_ena_d(0), column, row);
     
     decoder_mem: video_decoder port map(
-	clock,
+	column,
 	row,
 	video_out,
-	mod_video_out);
+	mod_video_out,
+	rom_out,--entra
+	rom_address);
 
   VGA_R <= pixel when disp_ena='1' else '0';
   VGA_G <= pixel when disp_ena='1' else '0';
@@ -98,7 +103,10 @@ begin
   column_std <= std_logic_vector(to_unsigned(column, 10));
 
   row_div16 <= shift_right(to_unsigned(row, 12), 4); -- divide linha por 2, depois por 8, prenche um quadrado 2x2 para cada pixel
-
+		
+	rom_out<= X"00" when rom_address = "000000000" else X"FF"; 
+	
+	
   video_address <= std_logic_vector(
               (shift_left(row_div16, 3)) -- como cada 10 palavras pintam uma linha (10palavras* 2colunas * 32bits)= 640,  fazemos row_div*8 + row_div*2
             + (shift_left(row_div16, 1)) 
