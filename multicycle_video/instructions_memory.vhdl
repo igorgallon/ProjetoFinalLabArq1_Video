@@ -19,37 +19,33 @@ architecture behavioral of instructions_memory is
 
 	type instructions_sequence is array (0 to length) of std_logic_vector (data_width - 1 downto 0);
 	signal instructions: instructions_sequence :=
-		-- lw $t0, 0($0)
+		-- addi $t0, $zero, 0
    (0 => X"20080000",
-		-- lw $t1, 0($0)
+		-- addi $t4, $zero, 20
     1 => X"200C0014",
-	 
+	   -- Jump: sll $t1, $t0, 8
 	 2 => X"00084A00",
-		-- lw $t2, 1($0)
+		-- or $t2, $t1, $t0
 	 3 => X"01285025",
-		-- add $t0, $t0, $t1
+		-- sll $t1, $t0, 16
 	 4 => X"00084C00",
-		-- add $t1, $t1, $t1
+		-- or $t2, $t2, $t1
 	 5 => X"01495025",
-		-- sw $t2, 0($t0)
-		--4 => X"AD0A0000",
-		-- sw $t0, 0($t0)
+		-- sll $t1, $t0, 24
 	 6 => X"00084E00",
-		-- beq $t1, $t0, -6
+		-- or $t2, $t2, $t1
 	 7 => X"01495025",
-		--j 3
-		--7 => X"08000003",
-		--bne,$t0, $t0, -6
+		-- addi $t3, $zero, 14
 	 8 => X"200B000E",
-		--bne,$t2, $t0, 1
+		-- Print: sw $t2, 0($t3)
 	 9 => X"AD6A0000",
-		--addi $t2,$0, A
+	 	-- addi $t3, $t3, 1
 	 10 => X"216B0001",
-	 
+		-- bne $t3, $t4, Print
 	 11 => X"156CFFFE",
-		
+		-- addi $t0, $t0, 1
 	 12 => X"21080001",
-	
+		--j Jump
     13 => X"08000C02",	
 		others => (others => 'U'));
 

@@ -126,7 +126,8 @@ architecture behavioral of processor is
 begin
 
     instruction_address <= address_of_next_instruction;
-		alu_operand1 <= register_a;
+		alu_operand1 <= register_b when source_alu = "10" else
+								register_a;	
 		
 		alu_operand2 <= register_b when source_alu = "00" else
 							 offset when source_alu = "01" else
